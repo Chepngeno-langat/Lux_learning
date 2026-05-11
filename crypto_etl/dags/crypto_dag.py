@@ -2,6 +2,16 @@ from airflow.decorators import dag, task
 from datetime import datetime
 import requests
 import pandas as pd
+from sqlalchemy import create_engine
+import os
+
+DB_URL = (
+    f"postgresql://{os.getenv('AIVEN_USER')}:"
+    f"{os.getenv('AIVEN_PASSWORD')}@"
+    f"{os.getenv('AIVEN_HOST')}:"
+    f"{os.getenv('AIVEN_PORT')}/"
+    f"{os.getenv('AIVEN_DB')}?sslmode=require"
+)
 
 COINS = ["btc-bitcoin", "eth-ethereum", "sol-solana"]
 
@@ -52,8 +62,15 @@ def crypto_pipeline():
 	@task
 	def load(file_path):
 		df = pd.read_csv(file_path)
-		print("Loaded rows:", len(df))
-		print(df.head())
+		
+		engine = create_engine(DB_URL)
+		
+		df.to_sql(
+			"crypto_prices",
+			engine,
+			if_exists="append",
+			index=False
+		)
 
 		return "Loaded Successfully"
 	

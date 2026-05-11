@@ -1,0 +1,24 @@
+services:
+  airflow:
+    build: .
+    container_name: crypto_airflow
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    environment:
+      AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+      AIRFLOW_HOME: /opt/airflow
+      AIRFLOW_USER_HOME_DIR: /home/airflow
+      PYTHONPATH: "/home/airflow/.local/lib/python3.8/site-packages"
+      PATH: "/home/airflow/.local/bin:/usr/local/bin:/usr/bin:/bin"
+      AIRFLOW__WEBSERVER__RATELIMIT_ENABLED: "false"
+      AIRFLOW__WEBSERVER__WORKERS: "1"
+      AIRFLOW__WEBSERVER__WORKER_TIMEOUT: "300"
+      OPENBLAS_NUM_THREADS: "1"
+      OMP_NUM_THREADS: "1"
+    volumes:
+      - ./dags:/opt/airflow/dags
+    entrypoint: ["/bin/bash", "-c"]
+    command: ["ulimit -u unlimited && exec /usr/local/bin/python3.8 -m airflow standalone"]
+    privileged: true
