@@ -1,0 +1,13 @@
+ament-package==0.9.5
+Faker==40.19.1
+iniconfig==2.3.0
+numpy==2.4.6
+packaging==26.2
+pandas==3.0.3
+pluggy==1.6.0
+py4j==0.10.9.7
+Pygments==2.20.0
+pyspark==3.4.1
+pytest==9.0.3
+python-dateutil==2.9.0.post0
+six==1.17.0
