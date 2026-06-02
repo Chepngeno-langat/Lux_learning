@@ -39,13 +39,18 @@ returns_schema = StructType([
 ])
 
 # Load data
-def load_data(file_path, schema):
-    return (spark.read.format("csv")
+def load_data(spark, file_path, schema):
+    # Read with header names (all columns as strings), then select + cast by name
+    # so column order in the CSV does not have to match the schema.
+    raw = (spark.read.format("csv")
         .option("header", "true")
         .option("mode", "PERMISSIVE")
-        .schema(schema)
         .load(file_path)
     )
+    return raw.select(*[
+        F.col(field.name).cast(field.dataType).alias(field.name)
+        for field in schema.fields
+    ])
 
 # Rejected rows
 def split_rejected_rows(df, key_col):
@@ -75,10 +80,10 @@ def load_returns(spark, path):
     return split_rejected_rows(raw, "return_id")
     
 def load_all(spark: SparkSession, data_dir: str):
-    orders,       rej_orders       = load_orders(spark, f"/output/orders.csv")
-    order_items,  rej_order_items  = load_order_items(spark, f"/output/order_items.csv")
-    customers,    rej_customers    = load_customers(spark, f"/output/customers.csv")
-    returns,      rej_returns      = load_returns(spark, f"/output/returns.csv")
+    orders,       rej_orders       = load_orders(spark, f"{data_dir}/orders.csv")
+    order_items,  rej_order_items  = load_order_items(spark, f"{data_dir}/order_items.csv")
+    customers,    rej_customers    = load_customers(spark, f"{data_dir}/customers.csv")
+    returns,      rej_returns      = load_returns(spark, f"{data_dir}/returns.csv")
  
     # Log rejection counts
     for name, df in [
