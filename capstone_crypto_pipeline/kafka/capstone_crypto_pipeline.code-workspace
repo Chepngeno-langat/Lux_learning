@@ -1,0 +1,11 @@
+{
+	"folders": [
+		{
+			"path": ".."
+		},
+		{
+			"path": "../../crypto_etl"
+		}
+	],
+	"settings": {}
+}
