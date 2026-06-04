@@ -5,4 +5,5 @@ env/
 .venv/
 *.log
 *.csv
-.log
+scheduler.log
+webserver.log
