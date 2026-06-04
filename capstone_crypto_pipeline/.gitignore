@@ -5,4 +5,4 @@ env/
 .venv/
 *.log
 *.csv
-
+.log
